@@ -29,8 +29,3 @@
     marker: "#{mark} add string to discarding unwanted messages"
     content: ':msg, contains, "VALIDATOR_ADDRESS_PRIVATE_KEY" ~'
   notify: restart rsyslog
-   
-- name: Write new docker-compose file
-  copy:
-    content: "{{ docker_compose_parsed | to_nice_yaml }}"
-    dest: "{{ bridge_path }}/docker-compose.yml"
