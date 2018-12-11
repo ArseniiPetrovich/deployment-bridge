@@ -32,6 +32,7 @@
     owner: root
     group: root
     mode: 644
+  when: syslog_server_port is defined
 
 - name: Set the logrotate config file
   template:

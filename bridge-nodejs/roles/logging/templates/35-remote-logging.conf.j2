@@ -10,6 +10,8 @@ template(name="RemoteForwardFormat" type="list") {
     property(name="msg" spifno1stsp="on")
     property(name="msg")
 }
+
+if $programname startswith 'bridge_' or $programname startswith 'docker' then {
 action(
    type="omfwd"
    protocol="{{ syslog_server_port.split(":")[0] }}"
@@ -23,3 +25,4 @@ action(
    queue.Type="LinkedList"
    ResendLastMSGOnReconnect="on"
    )
+}
