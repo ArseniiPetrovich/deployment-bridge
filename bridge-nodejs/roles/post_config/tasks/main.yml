@@ -1,6 +1,6 @@
 - name: Get blocks
   become_user: "{{ compose_service_user }}" 
-  shell: docker-compose run bridge node scripts/getValidatorStartBlocks.js
+  shell: docker-compose run bridge_affirmation node scripts/getValidatorStartBlocks.js
   args:
     chdir: "{{ bridge_path }}"
   register: BLOCKS
@@ -15,7 +15,7 @@
 
 - name: Get validator address
   become_user: "{{ compose_service_user }}" 
-  shell: docker-compose run -e VALIDATOR_ADDRESS_PRIVATE_KEY="{{ VALIDATOR_ADDRESS_PRIVATE_KEY }}" bridge node scripts/privateKeyToAddress.js
+  shell: docker-compose run -e VALIDATOR_ADDRESS_PRIVATE_KEY="{{ VALIDATOR_ADDRESS_PRIVATE_KEY }}" bridge_affirmation node scripts/privateKeyToAddress.js
   args:
     chdir: "{{ bridge_path }}"
   register: VADDRESS
