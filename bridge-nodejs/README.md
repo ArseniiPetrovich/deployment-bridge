@@ -18,7 +18,7 @@ cd deployment-bridge/bridge-nodejs
 ```
 2. Create the file `hosts.yml` from `hosts.yml.example`
 ```
-cp hosts.yml.template hosts.yml
+cp hosts.yml.example hosts.yml
 ```
 
 `hosts.yml` should have the following structure:
