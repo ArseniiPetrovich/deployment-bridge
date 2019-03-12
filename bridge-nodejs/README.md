@@ -55,24 +55,25 @@ cp hosts.yml.example hosts.yml
 
    `group_vars/example.yml` shows an example configuration for the POA/Sokol - POA/Sokol bridge. Parameter values should match values from the .env file for the token-bridge. See https://github.com/poanetwork/token-bridge#configuration-parameters for details.
 
-2. Set the `versions` parameter in the `roles/repo/tasks/main.yml` file to define a specific branch or commit to use with the [token bridge](https://github.com/poanetwork/token-bridge). If `versions` is not specified, the default (`master`) branch is used.
+2. You can also add the following parameters in the `group_vars` to change the default behavior of `deployment-bridge` playbooks:
 
-   In this example, the `support-erc20-native-#81` branch is used.
+2.1 `compose_service_user` - specifies users to be created by playbooks. This user will be used to run POA bridge.
 
-```
-- name: Get bridge repo
-  git:
-    repo: "{{ bridge_repo }}"
-    dest: "{{ bridge_path }}"
-    force: yes
-    version: support-erc20-native-#81
-```
+2.2 `bridge_repo` contains address of token-bridge repository. The default value is  https://github.com/poanetwork/token-bridge.
+
+2.3 `bridge_repo_branch` points to the specific branch or commit to use with the `bridge_repo`. If `bridge_repo_branch` is not specified, the default (`master`) branch is used.
+
+2.4 `bridge_path` set the path where token-bridge would be installed. By default it point to the home folder of `compose_service_user`
+
+2.5 `docker_compose_version` - specifies a version of docker-compose to be installed.
+
+2.6 `ALLOW_HTTP` (`no` by default) can be set to `yes` to allow bridge insecure connections to the network.
 
 ## Execution
 
-The playbook can be executed once [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) is installed and all configuration variables are complete. 
+The playbook can be executed once [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) is installed and all configuration variables are set. 
 
-It will automatically install `Docker`, `docker-compose`, `Python`, `Git` and it dependencies (such as `curl`, `ca-certificates`, `apt-transport-https`, etc.) to the node. 
+It will automatically install `Docker`, `docker-compose`, `Python`, `Git` and it dependencies (such as `curl`, `ca-certificates`, `apt-transport-https`, etc.) to the node. Also this playbooks creates an additional non-sudo docker user to run service as.
 
 ```yaml
 ansible-playbook -i hosts.yml site.yml
@@ -96,17 +97,6 @@ To be used with the ansible-playbook command, for example:
 
 * `--private-key=<file_name>` - if private keyfile is required to connect to the ubuntu instance.
 
-**Useful variables:**
-
-These variables can be added to hosts.yml to override defaults.
-
-* `bridge_path` - absolute path where bridge will be installed. Defaults to /home/<ansible_user>/bridge.
-
-* `bridge_repo` - path to the bridge repo.
-
-* `docker_compose_version` - specify a version of docker-compose to be installed.
-
-
 ## Bridge service commands
 
 The Bridge service is named `poabridge`. Use the default `SysVinit` commands to `start`, `stop`, `restart`, and `rebuild` the service and to check the `status` of the service. 
@@ -118,11 +108,9 @@ sudo service poabridge [start|stop|restart|status|rebuild]
 
 ## Logs
 
-If the `syslog_server_port` option in the hosts.yml file was not set, all logs will be stored in containers and can be accessed via the default `docker-compose logs` command (use `sudo` if necessary). 
+If the `syslog_server_port` option in the hosts.yml file is not set, all logs will be stored in `/var/log/docker/` folder in the set of folders with the `bridge_` prefix. 
 
-To obtain logs, `cd` to the directory where the bridge is installed (`~/bridge` by default) and execute the `sudo docker-compose logs` command.
-
-If the `syslog_server_port` was set, logs can be obtained from the specified server.
+If the `syslog_server_port` is set, logs will be redirected to the specified server and cannot be accessed on the bridge machine.
 
 ```yaml 
 syslog_server_port: "<protocol>://<ip>:<port>" # When this parameter is set all bridge logs will be redirected to the <ip>:<port> address.

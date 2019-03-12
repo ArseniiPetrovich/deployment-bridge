@@ -1,7 +1,0 @@
-#bridge_path: "/home/{{ ansible_user }}/bridge"
-bridge_path: "/home/{{ compose_service_user }}/bridge"
-
-ALLOW_HTTP: no
-QUEUE_URL: amqp://127.0.0.1
-REDIS_URL: redis://127.0.0.1:6379
-REDIS_LOCK_TTL: 1000
